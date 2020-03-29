@@ -116,7 +116,7 @@ int main(void){
     // ---
     answer.clear();
     while (cin >> row >> col) {
-        if (row == 0) {
+        if (row == 0 || col == 0) {
             break;
         } else {
             MAZE *maze_ptr = new MAZE();
