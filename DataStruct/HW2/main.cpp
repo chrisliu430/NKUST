@@ -43,62 +43,36 @@ class MAZE {
         void MultipleCheck (int y, int x, int weight, int prey, int prex) {
             // Detail of weight
             // 1: From left 2: From right
-            // 3: From up 4: From down
-            // cout << "Y " << y << " X " << x << " W " << weight << endl;
             previousY = prey;
             previousX = prex;
             if (y == judgeY && x == judgeX) {
                 answerRouter += 1;
             } else if (mazeValue[y-1][x] == 0 && mazeValue[y][x-1] == 0 && weight != 3 && weight != 1) {
-                // cout << "1-1" << endl;
                 MultipleCheck(y-1,x,4,y,x);
-                // cout << "1-2" << endl;
                 MultipleCheck(y,x-1,2,y,x);
             } else if (mazeValue[y+1][x] == 0 && mazeValue[y][x-1] == 0 && weight != 4 && weight != 1) {
-                // cout << "2-1" << endl;
                 MultipleCheck(y+1,x,3,y,x);
-                // cout << "2-2" << endl;
                 MultipleCheck(y,x-1,2,y,x);
             } else if (mazeValue[y-1][x] == 0 && mazeValue[y+1][x] == 0 && weight != 3 && weight != 4) {
-                // cout << "5-1" << endl;
                 MultipleCheck(y-1,x,4,y,x);
-                // cout << "5-2" << endl;
                 MultipleCheck(y+1,x,3,y,x);
             } else if (mazeValue[y][x+1] == 0 && mazeValue[y][x-1] == 0 && weight != 2 && weight != 1) {
-                // cout << "6-1" << endl;
                 MultipleCheck(y,x+1,1,y,x);
-                // cout << "6-2" << endl;
                 MultipleCheck(y,x-1,2,y,x);
             } else if (mazeValue[y-1][x] == 0 && mazeValue[y][x+1] == 0 && weight != 3 && weight != 2 && x < judgeX) {
-                // cout << "3-1" << endl;
                 MultipleCheck(y-1,x,4,y,x);
-                // cout << "3-2" << endl;
                 MultipleCheck(y,x+1,1,y,x);
-            }
-            else if (mazeValue[y+1][x] == 0 && mazeValue[y][x+1] == 0 && weight != 4 && weight != 2 && x < judgeX) {
-                // cout << "4-1" << endl;
+            } else if (mazeValue[y+1][x] == 0 && mazeValue[y][x+1] == 0 && weight != 4 && weight != 2 && x < judgeX) {
                 MultipleCheck(y+1,x,3,y,x);
-                // cout << "4-2" << endl;
                 MultipleCheck(y,x+1,1,y,x);
             } else if (mazeValue[y][x-1] == 0 && weight != 1 && x >= judgeX && previousX != x-1) { //  && x >= judgeX
                 MultipleCheck(y,x-1,2,y,x);
             } else if (mazeValue[y+1][x] == 0 && (weight != 4 || y <= judgeY) && previousY != y+1) { // && y < judgeY
-                // mazeValue[y][x] = 2;
                 MultipleCheck(y+1,x,3,y,x);
             } else if (mazeValue[y-1][x] == 0 && weight != 3 && previousY != y-1) { // && y >= judgeY
-                // mazeValue[y][x] = 2;
                 MultipleCheck(y-1,x,4,y,x);
             } else if (mazeValue[y][x+1] == 0 && weight != 2 && previousX != x+1) { // && x < judgeX
-                // mazeValue[y][x] = 2;
                 MultipleCheck(y,x+1,1,y,x);
-            }
-        }
-        void VerifyMaze() {
-            for (int rowIdx = 0; rowIdx < mazeValue.size(); rowIdx++){
-                for (int colIdx = 0; colIdx < mazeValue[rowIdx].size(); colIdx++){
-                    cout << mazeValue[rowIdx][colIdx] << " ";
-                }
-                cout << endl;
             }
         }
         int GetRouter() {
@@ -127,13 +101,11 @@ int main(void){
                 }
                 maze_ptr->Push2DVector();
             }
-            // maze_ptr->VerifyMaze();
             cin >> y >> x;
             maze_ptr->SetStartPoint(y, x);
             cin >> y >> x;
             maze_ptr->SetEndPoint(y, x);
             maze_ptr->StartCalculate();
-            // maze_ptr->VerifyMaze();
             answer.push_back(maze_ptr->GetRouter());
             maze_ptr = 0;
         }
