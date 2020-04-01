@@ -49,7 +49,6 @@ class MAZE {
             // 3: From up 4: From down
             previousY = prey;
             previousX = prex;
-            cout << "Y " << y << " X " << x << endl;
             if (y == judgeY && x == judgeX) {
                 answerRouter += 1;
                 previousY = -1;
