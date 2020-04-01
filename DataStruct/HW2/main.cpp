@@ -29,57 +29,57 @@ class MAZE {
         }
         void StartCalculate() {
             // Router is from right to left
-            if (startY >= endY){
+            if (startX >= endX){
                 judgeY = endY;
                 judgeX = endX;
+                pointY = startY;
+                pointX = startX;
+                MultipleRouter(startY, startX, -1, -1, 0);
             } else {
                 judgeY = startY;
                 judgeX = startX;
-                startY = endY;
-                startX = endX;
+                pointY = endY;
+                pointX = endX;
+                MultipleRouter(endY, endX, -1, -1, 0);
             }
-            MultipleCheck(startY, startX, 0, -1, -1);
         }
-        void MultipleCheck (int y, int x, int weight, int prey, int prex) {
+        void MultipleRouter(int y, int x, int prey, int prex, int weight) {
             // Detail of weight
             // 1: From left 2: From right
+            // 3: From up 4: From down
             previousY = prey;
             previousX = prex;
+            cout << "Y " << y << " X " << x << endl;
             if (y == judgeY && x == judgeX) {
                 answerRouter += 1;
-            } else if (mazeValue[y-1][x] == 0 && mazeValue[y][x-1] == 0 && weight != 3 && weight != 1) {
-                MultipleCheck(y-1,x,4,y,x);
-                MultipleCheck(y,x-1,2,y,x);
-            } else if (mazeValue[y+1][x] == 0 && mazeValue[y][x-1] == 0 && weight != 4 && weight != 1) {
-                MultipleCheck(y+1,x,3,y,x);
-                MultipleCheck(y,x-1,2,y,x);
-            } else if (mazeValue[y-1][x] == 0 && mazeValue[y+1][x] == 0 && weight != 3 && weight != 4) {
-                MultipleCheck(y-1,x,4,y,x);
-                MultipleCheck(y+1,x,3,y,x);
-            } else if (mazeValue[y][x+1] == 0 && mazeValue[y][x-1] == 0 && weight != 2 && weight != 1) {
-                MultipleCheck(y,x+1,1,y,x);
-                MultipleCheck(y,x-1,2,y,x);
-            } else if (mazeValue[y-1][x] == 0 && mazeValue[y][x+1] == 0 && weight != 3 && weight != 2 && x < judgeX) {
-                MultipleCheck(y-1,x,4,y,x);
-                MultipleCheck(y,x+1,1,y,x);
-            } else if (mazeValue[y+1][x] == 0 && mazeValue[y][x+1] == 0 && weight != 4 && weight != 2 && x < judgeX) {
-                MultipleCheck(y+1,x,3,y,x);
-                MultipleCheck(y,x+1,1,y,x);
-            } else if (mazeValue[y][x-1] == 0 && weight != 1 && x >= judgeX && previousX != x-1) { //  && x >= judgeX
-                MultipleCheck(y,x-1,2,y,x);
-            } else if (mazeValue[y+1][x] == 0 && (weight != 4 || y <= judgeY) && previousY != y+1) { // && y < judgeY
-                MultipleCheck(y+1,x,3,y,x);
-            } else if (mazeValue[y-1][x] == 0 && weight != 3 && previousY != y-1) { // && y >= judgeY
-                MultipleCheck(y-1,x,4,y,x);
-            } else if (mazeValue[y][x+1] == 0 && weight != 2 && previousX != x+1) { // && x < judgeX
-                MultipleCheck(y,x+1,1,y,x);
+                previousY = -1;
+                previousX = -1;
+            } else {
+                for (int dir = 0; dir < 4; dir++){
+                    if (dir == 0 && x-1 >= 0 && x-1 != previousX && weight != 1 && mazeValue[y][x-1] == 0) {
+                        MultipleRouter(y, x-1, y, x, 2);
+                    }
+                    if (dir == 1 && y-1 >= 0 && y-1 != previousY && weight != 3 && mazeValue[y-1][x] == 0) {
+                        MultipleRouter(y-1, x, y, x, 4);
+                    }
+                    if (dir == 2 && y+1 <= mazeValue.size()-1 && y+1 != previousY && weight != 4 && mazeValue[y+1][x] == 0) {
+                        MultipleRouter(y+1, x, y, x, 3);
+                    }
+                    if (dir == 3 && x+1 <= mazeValue[y].size()-1 && x+1 != previousX && weight != 2
+                        && ((y-1 == previousY && weight == 3) || (y+1 == previousY && weight == 4) || (x-1 == previousX && weight == 1))
+                        && (mazeValue[y-1][x] != 0 || mazeValue[y][x+1] != 0 || mazeValue[y-1][x+1] != 0 || (y == judgeY && x < judgeX))
+                        && (mazeValue[y+1][x] != 0 || mazeValue[y][x+1] != 0 || mazeValue[y+1][x+1] != 0 || (y == judgeY && x < judgeX))
+                        && mazeValue[y][x+1] == 0) {
+                        MultipleRouter(y, x+1, y, x, 1);
+                    }
+                }
             }
         }
         int GetRouter() {
             return answerRouter;
         }
     private:
-        int answerRouter, startY, startX, endY, endX, judgeY, judgeX, previousY, previousX;
+        int answerRouter, startY, startX, endY, endX, judgeY, judgeX, previousY, previousX, pointY, pointX;
         vector<vector<int>> mazeValue;
         vector<int> valueVector;
 };
