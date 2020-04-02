@@ -46,22 +46,22 @@ int Resolve(int y, int x, int dir) {
     if (y == endY && x == endX) {
         answer += 1;
     }
-    if (maze[y-1][x] == 0) {
+    if (maze[y-1][x] == 0 && y-1 >= 0) {
         maze[y-1][x] = -1;
         Resolve(y-1, x, 0);
         maze[y-1][x] = 0;
     }
-    if (maze[y+1][x] == 0) {
+    if (maze[y+1][x] == 0 && y+1 <= rowNum) {
         maze[y+1][x] = -1;
         Resolve(y+1, x, 0);
         maze[y+1][x] = 0;
     }
-    if (maze[y][x-1] == 0) {
+    if (maze[y][x-1] == 0 && x-1 >= 0) {
         maze[y][x-1] = -1;
         Resolve(y, x-1, 0);
         maze[y][x-1] = 0;
     }
-    if (maze[y][x+1] == 0) {
+    if (maze[y][x+1] == 0 && x+1 <= colNum) {
         maze[y][x+1] = -1;
         Resolve(y, x+1, 0);
         maze[y][x+1] = 0;
