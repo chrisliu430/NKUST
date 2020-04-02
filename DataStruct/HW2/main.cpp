@@ -33,6 +33,7 @@ int Solve(void) {
             }
             cin >> startY >> startX;
             cin >> endY >> endX;
+            maze[startY][startX] = 2;
             Resolve(startY, startX, 0);
             cout << answer << endl;
             answer = 0;
