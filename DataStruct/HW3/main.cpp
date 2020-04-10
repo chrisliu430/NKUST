@@ -57,7 +57,7 @@ int Answer() {
             cout << nArr[i] << " ";
         cout << endl;
     } else {
-        cout << "Wrong Data\n";
+        cout << "wrong data\n";
     }
     return 0;
 }
