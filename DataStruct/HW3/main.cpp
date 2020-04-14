@@ -11,53 +11,17 @@ using namespace std;
 
 vector<string> TreePosition(0);
 vector<int> TreeValue(0);
+vector<string> AnswerJudge(0);
+vector<int> Answer(0);
 
-int VerifyNumber (int n, int c) {
-    if (n == 2) {
-        return ++c;
-    } else if (n == 1) {
-        return 0*c;
-    } else {
-        return VerifyNumber(n/2, ++c);
-    }
-}
-
-int Answer() {
-    bool judge = true;
-    int nArr[TreeValue.size()], initPos = TreeValue.size()-1, arrPos, arrSize, judgeN, counterN;
-    // ---
-    judgeN = VerifyNumber(TreeValue.size()+1, 0);
-    if (judgeN == 0) {
-        judge = false;
-    } else {
-        for (int i = 0; i < TreePosition.size(); i++)
-            nArr[i] = INT_MAX;
-        while (TreeValue.size() != 0) {
-            arrSize = arrPos = TreePosition.size()/2;
-            arrSize += 1;
-            counterN = 1;
-            for (string::iterator sPtr = TreePosition[initPos].begin(); sPtr < TreePosition[initPos].end(); sPtr++) {
-                arrSize > 2 ? (*sPtr == 'L' ? arrPos -= arrSize/2 : arrPos += arrSize/2) : (*sPtr == 'L' ? arrPos -= 1 : arrPos += 1);
-                arrSize = arrSize / 2 + 1;
-                counterN += 1;
-            }
-            arrPos < TreePosition.size() && counterN <= judgeN ? nArr[arrPos] = TreeValue[initPos] : nArr[arrPos] = INT_MAX;
-            TreeValue.pop_back();
-            initPos -= 1;
+int RecursionAnswer(string _target, vector<int>& _answer) {
+    for (int i = 0; i < TreePosition.size(); i++) {
+        if (TreePosition[i] == _target) {
+            AnswerJudge.push_back(_target);
+            RecursionAnswer(_target + "L", _answer);
+            _answer.push_back(TreeValue[i]);
+            RecursionAnswer(_target + "R", _answer);
         }
-        for (int i = 0; i < TreePosition.size(); i++) {
-            if (nArr[i] == INT_MAX) {
-                judge = false;
-                break;
-            }
-        }
-    }
-    if (judge) {
-        for (int i = 0; i < TreePosition.size(); i++)
-            cout << nArr[i] << " ";
-        cout << endl;
-    } else {
-        cout << "Wrong Data\n";
     }
     return 0;
 }
@@ -67,6 +31,7 @@ int Resolve (string *str) {
     bool analysis;
     char sArr[(*str).size() + 1], *ptrStr = sArr;
     string pArr = "";
+    bool judgeFinal = true;
     // ---
     strcpy(sArr, (*str).c_str());
     TreePosition.clear();
@@ -97,7 +62,29 @@ int Resolve (string *str) {
         }
         ptrStr += 1;
     }
-    Answer();
+    RecursionAnswer("", Answer);
+    if (Answer.size() != TreeValue.size()) {
+        judgeFinal = false;
+    } else {
+        for (int i = 0; i < AnswerJudge.size(); i++) {
+            for (int j = i+1; j < AnswerJudge.size(); j++) {
+                if (AnswerJudge[i] == AnswerJudge[j]) {
+                    judgeFinal = false;
+                    break;
+                }
+            }
+            if (judgeFinal == false) { break; }
+        }
+    }
+    if (judgeFinal) {
+        for (int i = 0; i < Answer.size(); i++)
+            cout << Answer[i] << " ";
+        cout << endl;
+    } else {
+        cout << "wrong data\n";
+    }
+    AnswerJudge.clear();
+    Answer.clear();
     return 0;
 }
 
