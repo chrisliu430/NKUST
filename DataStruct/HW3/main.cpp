@@ -23,16 +23,6 @@ int RecursionAnswer(string _target, vector<int>& _answer) {
             RecursionAnswer(_target + "R", _answer);
         }
     }
-<<<<<<< HEAD
-=======
-    if (judge) {
-        for (int i = 0; i < TreePosition.size(); i++)
-            cout << nArr[i] << " ";
-        cout << endl;
-    } else {
-        cout << "wrong data\n";
-    }
->>>>>>> e4db26ef88fa5c22e2cfdfd89c8ff762c808bda7
     return 0;
 }
 
