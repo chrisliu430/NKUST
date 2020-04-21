@@ -51,6 +51,8 @@ int Resolve (string *str) {
                 analysis = true;
                 TreeValue.push_back(value);
                 break;
+            case ' ':
+                break;
             default:
                 if (analysis) {
                     pArr += *ptrStr;
@@ -91,7 +93,7 @@ int Resolve (string *str) {
 int main(void) {
     cin.tie(0);
     string str;
-    while (cin >> str && str != "()") {
+    while (getline(cin, str) && str != "()") {
         Resolve(&str);
     }
     return 0;
