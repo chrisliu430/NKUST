@@ -1,71 +1,64 @@
 #include <iostream>
 #include <vector>
-#include <cstring>
 
 using namespace std;
 
-struct Tree{
-    int key;
-    int value;
-};
+vector<vector<bool>> graph(0);
+vector<bool> status(0);
+vector<int> router(0);
+vector<int> number(0);
+vector<int> stack(0);
+vector<int> frequency(0);
 
-vector<Tree> treeVec(0);
-
-int recursionTree (int n, int key, bool *sPtr) {
-    if (n == 1) {
-        // cout << *sPtr << " ";
-        if (*sPtr == 1) {
-            Tree t;
-            t.key = key;
-            t.value = n - 1;
-            treeVec.push_back(t);
-        }
-    } else {
-        recursionTree(n - 1, key, sPtr - 1);
-        // cout << *sPtr << " ";
-        if (*sPtr == 1) {
-            Tree t;
-            t.key = key;
-            t.value = n - 1;
-            treeVec.push_back(t);
+int check() {
+    bool breakJudge = false;
+    for (int i = 0; i < status.size(); i++) {
+        if (status[i] == 1 && router[i] >= 1) {
+            breakJudge = true;
+        } else {
+            breakJudge = false;
+            break;
         }
     }
-    return 0;
+    return breakJudge;
 }
 
-int tree(int *n, bool *sPtr, bool *ePtr) {
-    bool *assPtr = ePtr - *n;
-    for (int i = 1; i <= *n; i++) {
-        if (*(assPtr + (i-1)) == 1) {
-            recursionTree(*n, (i-1), sPtr + (i * *n - 1));
+int solve(int n) {
+    int min = INT_MAX, reg, runSize;
+    bool inStatus, writeMin = true, pushJudge;
+    // ---
+    while (graph.size() != n) {
+        reg = 0;
+        while (status.size() != n) {
+            cin >> inStatus;
+            status.push_back(inStatus);
         }
+        for (int i = 0; i < n; i++) {
+            if (status[i] == 1) {
+                reg++;
+            }
+        }
+        frequency.push_back(reg);
+        graph.push_back(status);
+        status.clear();
     }
-    for (int i = 0; i < treeVec.size(); i++) {
-        cout << treeVec[i].key << " " << treeVec[i].value << endl;
+    while (status.size() != n) {
+        cin >> inStatus;
+        status.push_back(inStatus);
+        router.push_back(0);
     }
+    for (int i = 0; i < n; i++) {
+    }
+    graph.clear();
+    status.clear();
+    router.clear();
+    frequency.clear();
+    cout << min << endl;
     return 0;
 }
-
-int solve(int *n) {
-    int arrSize = *n * *n + *n;
-    bool status; // Graph
-    bool *choosePtr = (bool*) malloc(sizeof(bool) * arrSize), *nPtr = choosePtr; // Pointer
-    memset(choosePtr, 0, arrSize);
-    while (choosePtr + arrSize != nPtr) {
-        cin >> status;
-        *nPtr = status;
-        // cout << *nPtr << " ";
-        nPtr++;
-        // if ((nPtr - choosePtr) % *n == 0) { cout << endl; }
-    }
-    tree(n, choosePtr, nPtr);
-    return 0;
-}
-
+ 
 int main(void) {
     int n;
-    while (cin >> n && n > 0) {
-        solve(&n);
-    }
+    while (cin >> n && n > 0) { solve(n); }
     return 0;
-}
+} 
