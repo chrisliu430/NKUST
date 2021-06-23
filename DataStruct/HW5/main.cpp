@@ -23,7 +23,7 @@ void Run(int pos, int freq, vector<int> &run, vector<vector<bool>> &graph) {
 
 int Solve(vector<vector<bool>> &graph, int n) {
     // FINISH
-    int verifyN = INT_MAX, reg = 0;
+    int verifyN = 2147483647, reg = 0;
     vector<int> answer(0), record(0), run(0);
     for (int i = 0; i < n; i++) {
         answer.push_back(0);
