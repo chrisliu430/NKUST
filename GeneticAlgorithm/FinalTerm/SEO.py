@@ -1,3 +1,5 @@
+import os
+import sys
 import math
 import random
 
@@ -37,6 +39,46 @@ def GenerateInit(_n = 6):
     for _ in range (_n):
         solve2.append(round(random.random(), 3))
     return solve1, solve2
+
+def GenerateBinary(solve, _func = 1):
+    binSolve = []
+    if (_func == 1): # 0.5
+        for val in solve:
+            if (val >= 0.5):
+                binSolve.append(1)
+            else:
+                binSolve.append(0)
+    if (_func == 2): # Average
+        totalVal = 0
+        for val in solve:
+            totalVal += val
+        averageVal = round(totalVal / len(solve), 4)
+        for val in solve:
+            if (val >= averageVal):
+                binSolve.append(1)
+            else:
+                binSolve.append(0)
+    if (_func == 3): # Random
+        for val in solve:
+            if (val >= round(random.random(), 4)):
+                binSolve.append(1)
+            else:
+                binSolve.append(0)
+    return binSolve
+
+def IsViolation(cap, itemWeight, binSolve):
+    takeCap = 0
+    for idx in range (len(binSolve)):
+        takeCap += (itemWeight[idx] * binSolve[idx])
+    if (takeCap > cap):
+        return True, takeCap
+    return False, takeCap
+
+def ComputingProfits(itemProfit, binSolve):
+    takeProfit = 0
+    for idx in range (len(binSolve)):
+        takeProfit += (itemProfit[idx] * binSolve[idx])
+    return takeProfit
 
 # Attack 3.3.1
 def Obtaining(attacker, defener, beta = 0.5):
@@ -80,52 +122,128 @@ def Pretext(attacker, defener, beta = 0.5):
         newDefener.append(val1 + val2)
     return newDefener
 
-# def SpotAttack(attacker, defener, _func):
-    # if (_func == 1): # Random
-
-def GenerateBinary(solve, _func = 1):
-    binSolve = []
-    if (_func == 1): # 0.5
-        for val in solve:
-            if (val >= 0.5):
-                binSolve.append(1)
+def SpotAttack(cap, itemWeight, itemProfit, attacker, defener, _func = 1):
+    if (_func == 1): # Random
+        c = random.choice([1, 2, 3, 4])
+        if (c == 1):
+            newDefener = Obtaining(attacker, defener)
+            newBin = GenerateBinary(newDefener)
+            isVio, _ = IsViolation(cap, itemWeight, newBin)
+            if (isVio):
+                return defener
             else:
-                binSolve.append(0)
-    if (_func == 2): # Average
-        totalVal = 0
-        for val in solve:
-            totalVal += val
-        averageVal = round(totalVal / len(solve), 4)
-        for val in solve:
-            if (val >= averageVal):
-                binSolve.append(1)
+                binSolve = GenerateBinary(defener)
+                profit = ComputingProfits(itemProfit, binSolve)
+                newProfit = ComputingProfits(itemProfit, newBin)
+                if (profit > newProfit):
+                    return defener
+                else:
+                    return newDefener
+        if (c == 2):
+            newDefener1, newDefener2 = Phishing(attacker, defener)
+            newBin1 = GenerateBinary(newDefener1)
+            isVio1, _ = IsViolation(cap, itemWeight, newBin1)
+            newBin2 = GenerateBinary(newDefener2)
+            isVio2, _ = IsViolation(cap, itemWeight, newBin2)
+            if (isVio1 and isVio2):
+                return defener
+            elif (not isVio1 and isVio2):
+                binSolve = GenerateBinary(defener)
+                profit = ComputingProfits(itemProfit, binSolve)
+                newProfit = ComputingProfits(itemProfit, newBin1)
+                if (profit > newProfit):
+                    return defener
+                else:
+                    return newDefener1
+            elif (isVio1 and not isVio2):
+                binSolve = GenerateBinary(defener)
+                profit = ComputingProfits(itemProfit, binSolve)
+                newProfit = ComputingProfits(itemProfit, newBin2)
+                if (profit > newProfit):
+                    return defener
+                else:
+                    return newDefener2
             else:
-                binSolve.append(0)
-    if (_func == 3): # Random
-        for val in solve:
-            if (val >= round(random.random(), 4)):
-                binSolve.append(1)
+                binSolve = GenerateBinary(defener)
+                profit = ComputingProfits(itemProfit, binSolve)
+                newProfit1 = ComputingProfits(itemProfit, newBin1)
+                newProfit2 = ComputingProfits(itemProfit, newBin2)
+                if (profit > newProfit1):
+                    if (profit > newProfit2):
+                        return defener
+                    else:
+                        return newDefener2
+                else:
+                    if (newProfit1 > newProfit2):
+                        return newDefener1
+                    else:
+                        return newDefener2
+        if (c == 3):
+            newDefener = DiversionTheft(attacker, defener)
+            newBin = GenerateBinary(newDefener)
+            isVio, _ = IsViolation(cap, itemWeight, newBin)
+            if (isVio):
+                return defener
             else:
-                binSolve.append(0)
-    return binSolve
+                binSolve = GenerateBinary(defener)
+                profit = ComputingProfits(itemProfit, binSolve)
+                newProfit = ComputingProfits(itemProfit, newBin)
+                if (profit > newProfit):
+                    return defener
+                else:
+                    return newDefener
+        if (c == 4):
+            newDefener = Pretext(attacker, defener)
+            newBin = GenerateBinary(newDefener)
+            isVio, _ = IsViolation(cap, itemWeight, newBin)
+            if (isVio):
+                return defener
+            else:
+                binSolve = GenerateBinary(defener)
+                profit = ComputingProfits(itemProfit, binSolve)
+                newProfit = ComputingProfits(itemProfit, newBin)
+                if (profit > newProfit):
+                    return defener
+                else:
+                    return newDefener
 
-def IsViolation(cap, itemWeight, binSolve):
-    takeCap = 0
-    for idx in range (len(binSolve)):
-        takeCap += (itemWeight[idx] * binSolve[idx])
-    if (takeCap > cap):
-        return True
-    return False
+def WriteLog(num, attackTimes, maxAttack, cap, itemWeight, itemProfit, attacker, firstWr, t):
+    logPath = "./Knapsack01_Log/"
+    if (not os.path.exists(logPath)):
+        os.mkdir(logPath)
 
-def ComputingProfits(itemProfit, binSolve):
-    takeProfit = 0
-    for idx in range (len(binSolve)):
-        takeProfit += (itemProfit[idx] * binSolve[idx])
-    return takeProfit
+    if (firstWr):
+        logFile = open(logPath + "P" + str(num) + "_" + str(attackTimes) + "_" + str(maxAttack) + ".log", "w")
+        logFile.write("Initial Solutions" + "\n")
+    else:
+        logFile = open(logPath + "P" + str(num) + "_" + str(attackTimes) + "_" + str(maxAttack) + ".log", "a")
+        logFile.write("Round " + str(t + 1) + "\n")
+
+    binAttacker = GenerateBinary(attacker)
+    profitAttacker = ComputingProfits(itemProfit, binAttacker)
+    isVio, attackerWeight = IsViolation(cap, itemWeight, binAttacker)
+
+    logFile.write("Attacker Profits:\t" + str(profitAttacker) + "\n")
+    logFile.write("Attacker Weights:\t" + str(attackerWeight) + "\n")
+    logFile.write("Attacker Violations:\t" + str(isVio) + "\n")
+    logFile.write("=" * 150 + "\n")
+    for attack in attacker:
+        logFile.write(str(round(attack, 4)) + "\t")
+    logFile.write("\n")
+    logFile.write("-" * 150 + "\n")
+    for attack in binAttacker:
+        logFile.write(str(attack) + "\t")
+    logFile.write("\n")
+    logFile.write("=" * 150 + "\n")
+    logFile.write("\n")
+    
+    logFile.close()
 
 if __name__ == "__main__":
-    attackTimes = 100
-    cap, itemWeight, itemProfit, itemOptimal = ReadDataset(1)
+    pNumber = int(sys.argv[1])
+    attackTimes = int(sys.argv[2])
+    maxAttack = int(sys.argv[3])
+    cap, itemWeight, itemProfit, itemOptimal = ReadDataset(pNumber)
     
     itemSize = len(itemWeight)
     solve1, solve2 = GenerateInit(itemSize)
@@ -133,8 +251,8 @@ if __name__ == "__main__":
     binSolve1 = GenerateBinary(solve1)
     binSolve2 = GenerateBinary(solve2)
 
-    vioSolve1 = IsViolation(cap, itemWeight, binSolve1)
-    vioSolve2 = IsViolation(cap, itemWeight, binSolve2)
+    vioSolve1, _ = IsViolation(cap, itemWeight, binSolve1)
+    vioSolve2, _ = IsViolation(cap, itemWeight, binSolve2)
 
     if (vioSolve1 and vioSolve2):
         if (random.random() >= 0.5):
@@ -159,4 +277,52 @@ if __name__ == "__main__":
             defener = solve1.copy()
             attacker = solve2.copy()
 
-    # for _ in range (attackTimes):
+    # Output
+    WriteLog(pNumber, attackTimes, maxAttack, cap, itemWeight, itemProfit, attacker, True, 0)
+    # ======
+
+    for t in range (attackTimes):
+
+        for _ignore in range (maxAttack):
+            newDenfener = SpotAttack(cap, itemWeight, itemProfit, attacker.copy(), defener.copy())
+
+            binAttacker = GenerateBinary(attacker)
+            binDenfener = GenerateBinary(newDenfener)
+
+            vioAttacker, _ = IsViolation(cap, itemWeight, binAttacker)
+            vioDenfener, _ = IsViolation(cap, itemWeight, binDenfener)
+
+            if (vioAttacker and vioDenfener):
+                attacker = attacker.copy()
+                defener = newDenfener.copy()
+            elif (not vioAttacker and vioDenfener):
+                attacker = attacker.copy()
+                defener = newDenfener.copy()
+            elif (vioAttacker and not vioDenfener):
+                attacker = newDenfener.copy()
+                defener = attacker.copy()
+            else:
+                profitAttacker = ComputingProfits(itemProfit, binAttacker)
+                profitDenfener = ComputingProfits(itemProfit, binDenfener)
+                if (profitAttacker > profitDenfener):
+                    attacker = attacker.copy()
+                    defener = newDenfener.copy()
+                else:
+                    attacker = newDenfener.copy()
+                    defener = attacker.copy()
+
+        defener, _ = GenerateInit(itemSize)
+        
+        # Output
+        WriteLog(pNumber, attackTimes, maxAttack, cap, itemWeight, itemProfit, attacker, False, t)
+        # ======
+
+    isOptSolve = True
+    binAttacker = GenerateBinary(attacker)
+    for idx in range (len(binAttacker)):
+        if (binAttacker[idx] != itemOptimal[idx]):
+            isOptSolve = False
+            break
+    
+    if (isOptSolve):
+        print("P" + str(pNumber) + " is find optimal profit.")
